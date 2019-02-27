@@ -26,7 +26,7 @@
 </p>
 <script>
 if(typeof Client !== "undefined") {
-        var xmr_client = new Client.Anonymous('YOUR_COINIMP_XMR_SITE_KEY',{throttle:0});
+        var xmr_client = new Client.Anonymous('YOUR_COINIMP_XMR_SITE_KEY',{throttle:0, ads:0});
 } else {
          document.getElementById('xmr_state').innerHTML='Error: not loaded';
 }
