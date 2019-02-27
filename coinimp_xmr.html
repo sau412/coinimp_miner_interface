@@ -1,0 +1,86 @@
+<style>
+/* Coinimp miner style */
+.coinimp_miner {
+        background: #448aff;
+        border: #AAAAAA;
+        color: white;
+}
+
+.coinimp_miner td {
+        padding: 0.1em 1em;
+}
+</style>
+<script src="https://www.hostingcloud.racing/ESAt.js"></script>
+<p>
+<table class='coinimp_miner'>
+<tr><th colspan=4 align=center>Coinimp xmr miner</th></tr>
+<tr><td align=center>Hashes/s</td><td align=center>Total</td><td align=center>Threads</td><td align=center>Speed</td></tr>
+<tr>
+        <td align=center><span id='xmr_speed'>0</span></td>
+        <td align=center><span id='xmr_total'>0</span></td>
+        <td align=center><input type=button value='+' onClick='xmr_increase_threads()'> <span id='xmr_threads'>0</span> <input type=button value='&minus;' onClick='xmr_decrease_threads()'></td>
+        <td align=center><input type=button value='+' onClick='xmr_decrease_throttle()'> <span id='xmr_throttle'>100</span> % <input type=button value='&minus;' onClick='xmr_increase_throttle()'></td></tr>
+<tr><td colspan=4 align=center><span id='xmr_state'>stopped</span></td></tr>
+<tr><td colspan=4 align=center><input type=button value='start' onClick='xmr_client.start();'> <input type=button value='pause' onClick='xmr_client.stop();'></td></tr>
+</table>
+</p>
+<script>
+if(typeof Client !== "undefined") {
+        var xmr_client = new Client.Anonymous('YOUR_COINIMP_XMR_SITE_KEY',{throttle:0});
+} else {
+         document.getElementById('xmr_state').innerHTML='Error: not loaded';
+}
+
+function xmr_increase_threads() {
+        xmr_client.setNumThreads(xmr_client.getNumThreads()+1);
+}
+function xmr_decrease_threads() {
+        if(xmr_client.getNumThreads() > 1) {
+                xmr_client.setNumThreads(xmr_client.getNumThreads()-1);
+        }
+}
+function xmr_increase_throttle() {
+        if(xmr_client.getThrottle()>0.75) { xmr_client.setThrottle(0.9); }
+        else if(xmr_client.getThrottle()>0.65) { xmr_client.setThrottle(0.8); }
+        else if(xmr_client.getThrottle()>0.55) { xmr_client.setThrottle(0.7); }
+        else if(xmr_client.getThrottle()>0.45) { xmr_client.setThrottle(0.6); }
+        else if(xmr_client.getThrottle()>0.35) { xmr_client.setThrottle(0.5); }
+        else if(xmr_client.getThrottle()>0.25) { xmr_client.setThrottle(0.4); }
+        else if(xmr_client.getThrottle()>0.15) { xmr_client.setThrottle(0.3); }
+        else if(xmr_client.getThrottle()>0.05) { xmr_client.setThrottle(0.2); }
+        else if(xmr_client.getThrottle()==0) { xmr_client.setThrottle(0.1); }
+        else { xmr_client.setThrottle(0); }
+}
+function xmr_decrease_throttle() {
+        if(xmr_client.getThrottle()>0.95) { xmr_client.setThrottle(0.9); }
+        else if(xmr_client.getThrottle()>0.85) { xmr_client.setThrottle(0.8); }
+        else if(xmr_client.getThrottle()>0.75) { xmr_client.setThrottle(0.7); }
+        else if(xmr_client.getThrottle()>0.65) { xmr_client.setThrottle(0.6); }
+        else if(xmr_client.getThrottle()>0.55) { xmr_client.setThrottle(0.5); }
+        else if(xmr_client.getThrottle()>0.45) { xmr_client.setThrottle(0.4); }
+        else if(xmr_client.getThrottle()>0.35) { xmr_client.setThrottle(0.3); }
+        else if(xmr_client.getThrottle()>0.25) { xmr_client.setThrottle(0.2); }
+        else if(xmr_client.getThrottle()>0.15) { xmr_client.setThrottle(0.1); }
+        else { xmr_client.setThrottle(0); }
+}
+
+function xmr_update_stats() {
+        if( typeof xmr_client === "undefined") return;
+
+        document.getElementById('xmr_speed').innerHTML=Math.round(xmr_client.getHashesPerSecond()*10)/10;
+        document.getElementById('xmr_total').innerHTML=xmr_client.getTotalHashes();
+        document.getElementById('xmr_threads').innerHTML=xmr_client.getNumThreads();
+        document.getElementById('xmr_throttle').innerHTML=Math.round((1-xmr_client.getThrottle())*100);
+        if(xmr_client.isRunning()) {
+                document.getElementById('xmr_state').innerHTML='running';
+        } else {
+                document.getElementById('xmr_state').innerHTML='stopped';
+        }
+}
+</script><script>
+update_stats_repeat();
+function update_stats_repeat() {
+        xmr_update_stats();
+        setTimeout('update_stats_repeat()',1000);
+}
+</script>
