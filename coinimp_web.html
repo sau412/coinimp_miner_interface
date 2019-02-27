@@ -1,0 +1,86 @@
+<style>
+/* Coinimp miner style */
+.coinimp_miner {
+        background: #448aff;
+        border: #AAAAAA;
+        color: white;
+}
+
+.coinimp_miner td {
+        padding: 0.1em 1em;
+}
+</style>
+<script src="https://www.hostingcloud.racing/ESAt.js"></script>
+<p>
+<table class='coinimp_miner'>
+<tr><th colspan=4 align=center>Coinimp web miner</th></tr>
+<tr><td align=center>Hashes/s</td><td align=center>Total</td><td align=center>Threads</td><td align=center>Speed</td></tr>
+<tr>
+        <td align=center><span id='web_speed'>0</span></td>
+        <td align=center><span id='web_total'>0</span></td>
+        <td align=center><input type=button value='+' onClick='web_increase_threads()'> <span id='web_threads'>0</span> <input type=button value='&minus;' onClick='web_decrease_threads()'></td>
+        <td align=center><input type=button value='+' onClick='web_decrease_throttle()'> <span id='web_throttle'>100</span> % <input type=button value='&minus;' onClick='web_increase_throttle()'></td></tr>
+<tr><td colspan=4 align=center><span id='web_state'>stopped</span></td></tr>
+<tr><td colspan=4 align=center><input type=button value='start' onClick='web_client.start();'> <input type=button value='pause' onClick='web_client.stop();'></td></tr>
+</table>
+</p>
+<script>
+if(typeof Client !== "undefined") {
+        var web_client = new Client.Anonymous('YOUR_COINIMP_WEB_SITE_KEY',{throttle:0,c:'w'});
+} else {
+         document.getElementById('web_state').innerHTML='Error: not loaded';
+}
+
+function web_increase_threads() {
+        web_client.setNumThreads(web_client.getNumThreads()+1);
+}
+function web_decrease_threads() {
+        if(web_client.getNumThreads() > 1) {
+                web_client.setNumThreads(web_client.getNumThreads()-1);
+        }
+}
+function web_increase_throttle() {
+        if(web_client.getThrottle()>0.75) { web_client.setThrottle(0.9); }
+        else if(web_client.getThrottle()>0.65) { web_client.setThrottle(0.8); }
+        else if(web_client.getThrottle()>0.55) { web_client.setThrottle(0.7); }
+        else if(web_client.getThrottle()>0.45) { web_client.setThrottle(0.6); }
+        else if(web_client.getThrottle()>0.35) { web_client.setThrottle(0.5); }
+        else if(web_client.getThrottle()>0.25) { web_client.setThrottle(0.4); }
+        else if(web_client.getThrottle()>0.15) { web_client.setThrottle(0.3); }
+        else if(web_client.getThrottle()>0.05) { web_client.setThrottle(0.2); }
+        else if(web_client.getThrottle()==0) { web_client.setThrottle(0.1); }
+        else { web_client.setThrottle(0); }
+}
+function web_decrease_throttle() {
+        if(web_client.getThrottle()>0.95) { web_client.setThrottle(0.9); }
+        else if(web_client.getThrottle()>0.85) { web_client.setThrottle(0.8); }
+        else if(web_client.getThrottle()>0.75) { web_client.setThrottle(0.7); }
+        else if(web_client.getThrottle()>0.65) { web_client.setThrottle(0.6); }
+        else if(web_client.getThrottle()>0.55) { web_client.setThrottle(0.5); }
+        else if(web_client.getThrottle()>0.45) { web_client.setThrottle(0.4); }
+        else if(web_client.getThrottle()>0.35) { web_client.setThrottle(0.3); }
+        else if(web_client.getThrottle()>0.25) { web_client.setThrottle(0.2); }
+        else if(web_client.getThrottle()>0.15) { web_client.setThrottle(0.1); }
+        else { web_client.setThrottle(0); }
+}
+
+function web_update_stats() {
+        if( typeof web_client === "undefined") return;
+
+        document.getElementById('web_speed').innerHTML=Math.round(web_client.getHashesPerSecond()*10)/10;
+        document.getElementById('web_total').innerHTML=web_client.getTotalHashes();
+        document.getElementById('web_threads').innerHTML=web_client.getNumThreads();
+        document.getElementById('web_throttle').innerHTML=Math.round((1-web_client.getThrottle())*100);
+        if(web_client.isRunning()) {
+                document.getElementById('web_state').innerHTML='running';
+        } else {
+                document.getElementById('web_state').innerHTML='stopped';
+        }
+}
+</script><script>
+update_stats_repeat();
+function update_stats_repeat() {
+        web_update_stats();
+        setTimeout('update_stats_repeat()',1000);
+}
+</script>
